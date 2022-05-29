@@ -337,3 +337,33 @@ and it’s __proto__ is linked to userCreator, finally the object is returned fr
 ***Problems:*** 95% of developers have no idea how it works and therefore fail interviews
 We have to upper case first letter of the function so we know it requires ‘new’ to
 work!
+
+## Solution 4: The ES6 class ‘syntactic sugar’
+
+We’re writing our shared methods separately from our object ‘constructor’ itself (off in the userCreator.prototype object)
+Other languages let us do this all in one place. ES2015 lets us do so too
+
+```jsx
+class UserCreator {
+ constructor (name, score){
+	 this.name = name;
+	 this.score = score;
+ }
+ increment (){ this.score++; }
+ login (){ console.log("login"); }
+}
+const user1 = new UserCreator("Eva", 9);
+user1.increment();
+```
+
+![Untitled](https://s3.us-west-2.amazonaws.com/secure.notion-static.com/34168cd6-0df0-46ec-ac1f-b36a41bf9165/Untitled.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20220529%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20220529T181547Z&X-Amz-Expires=86400&X-Amz-Signature=12b5beeed56c7041291e022ad154d69e7b2e69cb2a3097ab881e12e15b4c3059&X-Amz-SignedHeaders=host&response-content-disposition=filename%20%3D%22Untitled.png%22&x-id=GetObject)
+
+The above works exactly as solution 3 under the hood, class is just syntactic sugar over functions.
+
+![Untitled](https://s3.us-west-2.amazonaws.com/secure.notion-static.com/55d79a1d-6a59-4ea0-b5a2-ac5aa911d364/Untitled.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20220529%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20220529T181552Z&X-Amz-Expires=86400&X-Amz-Signature=254df7abad119f4245cb89ddc012f56207a7aceac77e432d0b1634dde87630f1&X-Amz-SignedHeaders=host&response-content-disposition=filename%20%3D%22Untitled.png%22&x-id=GetObject)
+
+***Solution4:***
+
+***Benefits***: Emerging as a new standard and Feels more like style of other languages (e.g. Python)
+***Problems***: 99% of developers have no idea how it works and therefore fail interviews
+But we will not be one of them!
