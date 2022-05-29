@@ -86,3 +86,32 @@ user3.score++;
 ```
 
 Our code is getting repetitive, we're breaking our DRY principle. And suppose we have millions of users! What could we do?
+
+### Solution 1. Generate objects using a function
+
+***Factory Functions Example:***
+
+```jsx
+function userCreator(name, score) {
+    const newUser = {};
+    newUser.score = score;
+    newUser.increment = function() {
+        newUser.score++;
+    };
+    return newUser;
+};
+
+const user1 = userCreator("Will", 3);
+const user2 = userCreator("Tim", 5);
+user1.increment()
+```
+
+This is what's known as a factory function. This is a function that returns an object. It’s like a factory, we give the arguments, it creates object and return us that object.****
+
+![Untitled](https://s3.us-west-2.amazonaws.com/secure.notion-static.com/0ce7a421-f454-4f10-b2bb-7bef4bc02e9e/Untitled.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20220529%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20220529T180314Z&X-Amz-Expires=86400&X-Amz-Signature=76cf3eec1bb580ba4fd57a4310f492bc88e712180b36cc425063ca6b8aab5c86&X-Amz-SignedHeaders=host&response-content-disposition=filename%20%3D%22Untitled.png%22&x-id=GetObject)
+
+***Solution 1 Summary***. Generate objects using a function
+
+***Problems***: Each time we create a new user we make space in our computer's memory for all our data and functions. But our functions are just copies. Is there a better way?
+
+***Benefits***: It's simple and easy to reason about!
