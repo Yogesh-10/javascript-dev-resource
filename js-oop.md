@@ -87,7 +87,7 @@ user3.score++;
 
 Our code is getting repetitive, we're breaking our DRY principle. And suppose we have millions of users! What could we do?
 
-### Solution 1. Generate objects using a function
+## Solution 1. Generate objects using a function (Factory Functions)
 
 ***Factory Functions Example:***
 
@@ -116,7 +116,7 @@ This is what's known as a factory function. This is a function that returns an o
 
 ***Benefits***: It's simple and easy to reason about!
 
-### Solution 2: Using the prototype chain
+## Solution 2: Using the prototype chain
 
 Rather than having each user object contain an increment function, ideally you want *one* increment function that is the same but contained on each of the user objects.
 
@@ -259,7 +259,7 @@ user1.increment();
 
 ***Benefits***: Super sophisticated(explicit) but not standard
 
-### Solution 3 - Introducing the keyword - new
+## Solution 3 - Introducing the keyword - new
 
 Introducing the keyword that automates the hard work: new
 
@@ -306,7 +306,6 @@ function userCreator(name, score) {
 
 const user1 = new userCreator("Will", 3);
 ```
-
 Working of Solution3 is exactly same as solution2, But new keywords does the work behind the scenes
 
 The new keyword automates a lot of our manual work
