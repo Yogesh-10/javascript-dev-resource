@@ -253,8 +253,87 @@ user1.increment();
 
 ![Untitled](https://s3.us-west-2.amazonaws.com/secure.notion-static.com/bbfc0255-f563-40df-8ae6-8fdbc568dec0/Untitled.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20220529%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20220529T181032Z&X-Amz-Expires=86400&X-Amz-Signature=4e8d50cb3fbca24ff21cf88e913dba755c59198fcbc4da1a5451abb4c871d23b&X-Amz-SignedHeaders=host&response-content-disposition=filename%20%3D%22Untitled.png%22&x-id=GetObject)
 
-**Solution 2**: Using the prototype chain
+***Solution 2***: Using the prototype chain
 
-**Problems:** No problems! It's beautiful. Maybe a little long-winded Write this every single time 
+***Problems:*** No problems! It's beautiful. Maybe a little long-winded Write this every single time 
 
-**Benefits**: Super sophisticated(explicit) but not standard
+***Benefits***: Super sophisticated(explicit) but not standard
+
+### Solution 3 - Introducing the keyword - new
+
+Introducing the keyword that automates the hard work: new
+
+When we call the function that returns an object with new in front we automate 2
+things
+
+1. Create a new user object
+2. Return the new user object
+But now we need to adjust how we write the body of userCreator - how can we:
+    - Refer to the auto-created object?
+    - Know where to put our single copies of functions?
+
+### **Interlude Explanation** : (**Functions are both objects and functions**)
+
+Functions are both objects and functions
+
+```jsx
+function multiplyBy2(num){
+ return num*2
+}
+multiplyBy2.stored = 5
+multiplyBy2(3) // 6
+multiplyBy2.stored // 5
+multiplyBy2.prototype // {}
+```
+
+We could use the fact that all functions have a default property `prototype` on their object version, (itself an object) - to replace our `functionStore` object
+
+![Untitled](https://s3.us-west-2.amazonaws.com/secure.notion-static.com/3421af9c-52ee-4739-a6d0-8d7788222e5a/Untitled.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20220529%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20220529T181324Z&X-Amz-Expires=86400&X-Amz-Signature=0745e65a2f605bde40345c9674c8f19b18c089f1a7895f1e262ceaa2313f876d&X-Amz-SignedHeaders=host&response-content-disposition=filename%20%3D%22Untitled.png%22&x-id=GetObject)
+
+```jsx
+//The new keyword automates a lot of our manual work
+function userCreator(name, score) {
+ ~~const newUser = Object.create(functionStore);~~
+ ~~newUser~~ this.name = name;
+ ~~newUser~~ this.score = score;
+ ~~return newUser;~~
+};
+
+~~functionStore~~ userCreator.prototype // {};
+~~functionStore~~ userCreator.prototype.increment = function(){
+ this.score++;
+}
+
+const user1 = new userCreator("Will", 3);
+```
+
+Working of Solution3 is exactly same as solution2, But new keywords does the work behind the scenes
+
+The new keyword automates a lot of our manual work
+
+```jsx
+function userCreator(name ,score) {
+    this.name = name;
+    this.score = score;
+}
+
+userCreator.prototype.increment = function() { this.score ++ };
+userCreator.prototype.login = function() { console.log("login"); };
+
+const user1 = new userCreator("Eva", 9);
+
+user1.increment();
+```
+
+![Untitled](https://s3.us-west-2.amazonaws.com/secure.notion-static.com/b25a3229-c32c-482c-b1a2-5fe36df662ef/Untitled.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20220529%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20220529T181403Z&X-Amz-Expires=86400&X-Amz-Signature=4feffd004608f7159ebd40613e568515f4709d96a3d2523f18527196bdd629e3&X-Amz-SignedHeaders=host&response-content-disposition=filename%20%3D%22Untitled.png%22&x-id=GetObject)
+
+When we call a function with new keyword, it automatically creates an empty object with `this`
+
+and it’s __proto__ is linked to userCreator, finally the object is returned from the function.
+
+***Solution 3 -*** 
+
+***Benefits:*** Faster to write. Often used in practice in professional code <br>
+***Problems:*** 95% of developers have no idea how it works and therefore fail interviews
+We have to upper case first letter of the function so we know it requires ‘new’ to
+work!
