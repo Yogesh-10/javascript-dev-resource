@@ -115,3 +115,146 @@ This is what's known as a factory function. This is a function that returns an o
 ***Problems***: Each time we create a new user we make space in our computer's memory for all our data and functions. But our functions are just copies. Is there a better way?
 
 ***Benefits***: It's simple and easy to reason about!
+
+### Solution 2: Using the prototype chain
+
+Rather than having each user object contain an increment function, ideally you want *one* increment function that is the same but contained on each of the user objects.
+
+Store the increment function in just one object and have the interpreter, if it doesn't find the function on user1, look up to that object to check if it's there.
+
+Link user1 and fcuntionStore so the interpreter, on not finding `.increment` makes sure to check up in the functionStore where it would find it.
+
+Make the link with `Object.create()` technique.
+
+![Untitled](https://s3.us-west-2.amazonaws.com/secure.notion-static.com/d48b600b-073f-4e8a-9a62-183ba9d2bbda/Untitled.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20220529%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20220529T180819Z&X-Amz-Expires=86400&X-Amz-Signature=386614a67370c973360d20649ab993cac180c567f8136922ec5b877a537e0458&X-Amz-SignedHeaders=host&response-content-disposition=filename%20%3D%22Untitled.png%22&x-id=GetObject)
+
+```jsx
+function userCreator(name, score) {
+    const newUser = Object.create(userFunctionStore);
+    newUser.name = name;
+    newUser.score = score;
+    return newUser;
+};
+
+const userFunctionStore = {
+    increment: function(){this.score++},
+    login: function(){console.log("Logged in");}
+};
+
+const user1 = userCreator("Will", 3);
+const user2 = userCreator("Tim", 5);
+
+user1.increment();
+```
+
+### ***Prototype Chain Example: Prototypal Link***
+
+![Untitled](https://s3.us-west-2.amazonaws.com/secure.notion-static.com/1b71fad0-eaa4-4d11-9bfd-ce96e633532f/Untitled.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20220529%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20220529T180854Z&X-Amz-Expires=86400&X-Amz-Signature=b9238ea2b234c5f6210148db6dabf277cc83aff7ed09ea4f4ec92b0ea4e1e96c&X-Amz-SignedHeaders=host&response-content-disposition=filename%20%3D%22Untitled.png%22&x-id=GetObject)
+
+When JS doesn't find a given property (method or data) on an object it goes to the proto property and looks up the prototype chain to see if it can find that method or data.****
+
+****Prototype Chain Example: Implicit Parameters****
+
+When you use `Object.create()` it creates an empty object with hidden `__proto__` property.
+
+When you call `.increment()` on an object JS will look up the prototype chain to see if it can find the method. It does, and on the left of the .increment call `this` will be bound to the object the call has been invoked on. e.g. `user1.increment()`. This will access user1's score property that is used to increment. `this` refers to what is on left side of dot.
+
+****Prototype Chain Example: hasOwnProperty Method**** 
+
+What if we want to confirm our user1 has the property score?
+
+```jsx
+function userCreator (name, score) {
+ const newUser = Object.create(userFunctionStore);
+ newUser.name = name;
+ newUser.score = score;
+ return newUser;
+};
+const userFunctionStore = {
+ increment: function(){this.score++;},
+ login: function(){console.log("Logged in");}
+};
+const user1 = userCreator("Will", 3);
+const user2 = userCreator("Tim", 5);
+**user1.hasOwnProperty('score')**
+```
+
+**We can use the hasOwnProperty method - but where is it? Is it on user1?**
+All objects have a **proto** property by default which defaults to linking to a big object Object.prototype full of (somewhat) useful functions. We get access to it via userFunctionStore’s **proto** property - the chain
+
+When you run the `user1.hasOwnProperty('score')` what happens is JS looks for the method "hasOwnProperty" on the user1 object. It doesn't exist so it looks up the chain to userFunctionStore. This doesn't have it either so it follows it's proto chain until it hits `Object.prototype` which *does* have the hasOwnProperty method. At which point it's grabbed and ran.
+
+![Untitled](https://s3.us-west-2.amazonaws.com/secure.notion-static.com/a0c4afcb-c6b1-426d-8a83-871f7f98ae3a/Untitled.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20220529%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20220529T180925Z&X-Amz-Expires=86400&X-Amz-Signature=0c0d60aed5ad82e15cc8d2c7ef9f135c1594393dce4fb7d973b72b92b088eb68&X-Amz-SignedHeaders=host&response-content-disposition=filename%20%3D%22Untitled.png%22&x-id=GetObject)
+
+### This Keyword
+
+Now let’s change our code little bit.
+
+Declaring & calling a new function inside our ‘method’ increment
+
+```jsx
+function userCreator(name, score) {
+	const newUser = Object.create(userFunctionStore);
+	[newUser.name](http://newuser.name/) = name;
+	newUser.score = score;
+	return newUser;
+};
+
+const userFunctionStore = {
+ increment: function() {
+ function add1(){ this.score++; }
+ add1()
+ }
+};
+
+const user1 = userCreator("Will", 3);
+const user2 = userCreator("Tim", 5);
+user1.increment();
+```
+
+Now, What does this refers to inside **increment function,** 
+
+What does this get auto-assigned to?
+
+![Untitled](https://s3.us-west-2.amazonaws.com/secure.notion-static.com/12fbba55-33b6-4ccf-8458-762a6b1c5b21/Untitled.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20220529%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20220529T181007Z&X-Amz-Expires=86400&X-Amz-Signature=bc497a7c76c8d116dfa001fff8d1e15dfdc57ca0b5443e1cca67c54772bd3739&X-Amz-SignedHeaders=host&response-content-disposition=filename%20%3D%22Untitled.png%22&x-id=GetObject)
+
+When we call add1() function, this refers to global object, because on left side of add1()function there is nothing for eg: user1.add1(), So by default, this keyword in normal function refers to global window object.
+
+We can solve this problem by using `call()` method. Instead of calling add1() directly we can use
+
+```jsx
+add1.call(this) /* here this will evaluate to user1, because we are inside 
+execution context of user1 */
+```
+
+There is also another clean way of solving this problem. By using **arrow functions,**  
+
+arrow functions don’t have their this keyword, if we use this inside arrow function, this is lexically scoped and refers to where the function was saved or stored, in our eg: add1() is saved inside UserCreator, so when we call user1.increment(), this refers to user1.
+
+```jsx
+function userCreator(name, score) {
+ const newUser = Object.create(userFunctionStore);
+ newUser.name = name;
+ newUser.score = score;
+ return newUser;
+};
+const userFunctionStore = {
+ increment: function() {
+ const add1 = () => { this.score++; }
+ add1()
+ }
+};
+const user1 = userCreator("Will", 3);
+const user2 = userCreator("Tim", 5);
+user1.increment();
+```
+
+**Now our inner function gets its this set by where it was saved - it’s a ‘lexically scoped this**
+
+![Untitled](https://s3.us-west-2.amazonaws.com/secure.notion-static.com/bbfc0255-f563-40df-8ae6-8fdbc568dec0/Untitled.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20220529%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20220529T181032Z&X-Amz-Expires=86400&X-Amz-Signature=4e8d50cb3fbca24ff21cf88e913dba755c59198fcbc4da1a5451abb4c871d23b&X-Amz-SignedHeaders=host&response-content-disposition=filename%20%3D%22Untitled.png%22&x-id=GetObject)
+
+**Solution 2**: Using the prototype chain
+
+**Problems:** No problems! It's beautiful. Maybe a little long-winded Write this every single time 
+
+**Benefits**: Super sophisticated(explicit) but not standard
