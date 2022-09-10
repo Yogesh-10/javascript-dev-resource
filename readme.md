@@ -1,4 +1,4 @@
-### javascript-dev-resource
+### Javascript-Dev-Resource
 
 Javascript Resoruce for references and Interview Preparations
 
